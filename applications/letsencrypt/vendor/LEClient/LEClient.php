@@ -59,6 +59,8 @@ class LEClient
 	const LOG_OFF = 0;		// Logs no messages or faults, except Runtime Exceptions.
 	const LOG_STATUS = 1;	// Logs only messages and faults.
 	const LOG_DEBUG = 2;	// Logs messages, faults and raw responses from HTTP requests.
+	
+	public $staging;
 
     /**
      * Initiates the LetsEncrypt main client.
@@ -73,7 +75,7 @@ class LEClient
      */
 	public function __construct($email, $acmeURL = LEClient::LE_PRODUCTION, $log = LEClient::LOG_OFF, $certificateKeys = 'keys/', $accountKeys = '__account/')
 	{
-
+		
 		$this->log = $log;
 
 		if (is_bool($acmeURL))
@@ -86,6 +88,8 @@ class LEClient
 			$this->baseURL = $acmeURL;
 		}
 		else throw new \RuntimeException('acmeURL must be set to string or bool (legacy).');
+		
+		$this->staging = $acmeURL == LEClient::LE_STAGING;
 
 		if (is_array($certificateKeys) && is_string($accountKeys)) throw new \RuntimeException('When certificateKeys is array, accountKeys must be array too.');
 		elseif (is_array($accountKeys) && is_string($certificateKeys)) throw new \RuntimeException('When accountKeys is array, certificateKeys must be array too.');
