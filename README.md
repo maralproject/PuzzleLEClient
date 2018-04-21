@@ -10,6 +10,7 @@ Let's Encrypt certificate with DNS-01 challenge provided by Cloudflare.
 - All transaction happend in the staging server. When you're ready, add `-live` to execute it on the active ACME v2 server
 
 ## Usage:
+To install, just download or clone the entire source, then copy all directory to your PuzzleOS root directory
 ```
 sudo -u www-data php puzzleos letsencrypt [set|revoke|order] [options] [-live] [-v] [-vv]
 ```
