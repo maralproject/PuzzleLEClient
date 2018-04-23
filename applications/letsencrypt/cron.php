@@ -5,7 +5,7 @@ defined("__POSEXEC") or die("No direct access allowed!");
 $ct = new CronTrigger;
 $ct->interval(T_DAY);
 
-CronJob::register("renew",$ct,function(){
+CronJob::register("renew",function(){
 	if(defined("__POSCLI")){
 		$io = new PObject([
 			"in" => function() { 
@@ -45,7 +45,7 @@ CronJob::register("renew",$ct,function(){
 		}
 	}
 	$io->out("Done!\n");
-});
+},$ct);
 
 /* Register a function to perform CLI */
 PuzzleCLI::register(function($io,$a){
