@@ -1,6 +1,5 @@
 # PuzzleLEClient
-Another PuzzleOS apps to integrate Let's Encrypt ACME v2 client
-A simple client tool for PuzzleOS to manage and automatically renew
+Another PuzzleOS apps to integrate Let's Encrypt ACME v2 client. Simple client tool for PuzzleOS to manage and automatically renew
 Let's Encrypt certificate with DNS-01 challenge provided by Cloudflare.
 - Require [PuzzleOS](https://github.com/maralproject/puzzleos) with PHP7+
 
@@ -9,8 +8,10 @@ Let's Encrypt certificate with DNS-01 challenge provided by Cloudflare.
 - When you want to revoke, make sure you put the correct domain order in the exact same order as you order the certificate in the first place.
 - All transaction happend in the staging server. When you're ready, add `-live` to execute it on the active ACME v2 server
 
+## Installation:
+Just download or clone the entire source, then copy all directory to your PuzzleOS root directory
+
 ## Usage:
-To install, just download or clone the entire source, then copy all directory to your PuzzleOS root directory
 ```
 sudo -u www-data php puzzleos letsencrypt [set|revoke|order] [options] [-live] [-v] [-vv]
 ```
