@@ -34,8 +34,8 @@ CronJob::register("renew",function(){
 	
 	require_once("class.php");
 	
-	$io->out("Renewing Let's Encrypt certificate...\n");
 	$db = Database::readAll("app_letsencrypt_cert","where `nextIssue`<'?'",time())->data;
+	if(count($db) > 0) $io->out("Renewing Let's Encrypt certificate...\n");
 	foreach($db as $d){
 		$io->out("Renewing ".$d["cn"]."...\n");
 		$domains = explode(",",$d["domains"]);
@@ -44,7 +44,7 @@ CronJob::register("renew",function(){
 			$io->out("OK!\n");
 		}
 	}
-	$io->out("Done!\n");
+	if(count($db) > 0) $io->out("Done!\n");
 },$ct);
 
 /* Register a function to perform CLI */
