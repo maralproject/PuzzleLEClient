@@ -145,7 +145,7 @@ class ACME{
 					
 					for ($i=125 ; $i>0 ; $i--){
 						$p_check = dns_get_record("_acme-challenge." . $d["identifier"],DNS_TXT)[0]["txt"];
-						if($p_check == $d["DNSDigest"]){
+						if($p_check == $d["DNSDigest"] && $i<100){
 							sleep(2);
 							break;
 						}
@@ -181,6 +181,7 @@ class ACME{
 			if($verbose) $io->out("OK!\n");
 			return true;
 		}else{
+			if($verbose) $io->out("Some authorization missing...\n");
 			$pending = $order->getPendingAuthorizations(LEOrder::CHALLENGE_TYPE_DNS);
 			if($verbose) print_r($pending);
 		}
