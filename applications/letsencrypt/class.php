@@ -174,7 +174,8 @@ class ACME{
 			if($order->isFinalized()) $order->getCertificate();
 			@\Database::deleteRow("app_letsencrypt_cert","cn",$common_name);
 			if($autorenew){
-				\Database::newRow("app_letsencrypt_cert",$common_name,join(",",$domains),time(),(time() + (89 * T_DAY)), $client->staging ? 0 : 1);
+				//Renew every 60 days
+				\Database::newRow("app_letsencrypt_cert",$common_name,join(",",$domains),time(),(time() + (60 * T_DAY)), $client->staging ? 0 : 1);
 				if($verbose) $io->out("Certificate will be reissued after 90 days. Make sure cronjob is set properly.\n");
 			}
 			if($verbose) $io->out("OK!\n");
