@@ -182,7 +182,7 @@ class ACME{
 			return true;
 		}else{
 			if($verbose) $io->out("Some authorization missing...\n");
-			$pending = $order->getPendingAuthorizations(LEOrder::CHALLENGE_TYPE_DNS);
+			$pending = $order->getPendingAuthorizations(\LEOrder::CHALLENGE_TYPE_DNS);
 			if($verbose) print_r($pending);
 		}
 	}
