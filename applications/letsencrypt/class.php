@@ -104,6 +104,22 @@ class ACME{
 	}
 	
 	/**
+	 * @param \LEClient $client 
+	 * @param string $common_name 
+	 * @param array $domains 
+	 * @param \PObject $io 
+	 * @param bool $verbose 
+	 * @return bool 
+	 */
+	public static function renew($client, $common_name, $domains, $io, $autorenew = true, $verbose = false){
+		//Removing old cretificate
+		$dir = realpath(rtrim(btfslash(Config::get("dir")),"/")."/".$common_name);
+
+		@unlink("$dir/order");
+		return ACME::order($client, $common_name, $domains, $io, $autorenew, $verbose);
+	}
+
+	/**
 	 * 
 	 * @param \LEClient $client 
 	 * @param string $common_name 
@@ -112,7 +128,7 @@ class ACME{
 	 * @param bool $verbose 
 	 * @return bool 
 	 */
-	public static function order($client, $common_name, $domains, $io, $autorenew = true, $verbose = false){		
+	public static function order($client, $common_name, $domains, $io, $autorenew = true, $verbose = false){
 		if(count($domains) == 0 || !is_array($domains)) throw new \PuzzleError("Domains cannot be empty!");
 		if($common_name == "") throw new \PuzzleError("Please specify common name using");
 		if(!is_a($client,"LEClient")) throw new \PuzzleError("Invalid Parameter");

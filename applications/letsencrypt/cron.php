@@ -40,7 +40,7 @@ CronJob::register("renew",function(){
 		$io->out("Renewing ".$d["cn"]."...\n");
 		$domains = explode(",",$d["domains"]);
 		$client = LE\ACME::getInstance($d["cn"],$d["live"]==1 ? false : true, LEClient::LOG_STATUS);
-		if(LE\ACME::order($client,$d["cn"],$domains,$io,true,true)){
+		if(LE\ACME::renew($client,$d["cn"],$domains,$io,true,true)){
 			$io->out("OK!\n");
 		}
 	}
