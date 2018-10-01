@@ -1,1 +1,1 @@
-<?php if($appProp->isMainApp) return false;?>
+<?php if($appProp->isMainApp && !__isCLI()) return false;?>
