@@ -1,5 +1,1 @@
-<?php
-defined("__POSEXEC") or die("No direct access allowed!");
-
-if(__getURI("app") == "letsencrypt") return false;
-?>
+<?php if($appProp->isMainApp) return false;?>
