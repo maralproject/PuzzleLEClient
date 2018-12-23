@@ -1,14 +1,16 @@
 <?php
 namespace LE;
-defined("__POSEXEC") or die("No direct access allowed!");
+
+use LEClient\LEClient;
+use LEClient\LEOrder;
 
 /* Make sure that the server uses PHP 7 */
-if(!version_compare(PHP_VERSION,"7.0.0",">=")){
-	throw new PuzzleError("Letsencrypt require PHP7!");
+if(!version_compare(PHP_VERSION,"7.1.0",">=")){
+	throw new PuzzleError("PuzzleLE Client require PHP7.1!");
 }
 
-require_once("vendor/LEClient/LEClient.php");
-require_once("vendor/cloudflare/autoload.php");
+require("vendor/LEClient/src/LEClient.php");
+require("vendor/cloudflare/autoload.php");
 
 class Config{
 	public static function get($key){
@@ -28,7 +30,7 @@ class ACME{
 	 * Get new ACME instance
 	 * @param bool $use_staging
 	 * @param integer $log_level
-	 * @return \LEClient
+	 * @return \LEClient\LEClient
 	 */
 	public static function getInstance($common_name = "", $use_staging = true, $log_level = NULL){
 		$common_name = trim($common_name);
@@ -62,10 +64,10 @@ class ACME{
 		 * 6. Enter the "Variable value". My is - C:\xampp\apache\conf\openssl.cnf
 		 * 7. Click "OK" and close all the windows and RESTART your computer.
 		 */ 
-		$client = new \LEClient(
+		$client = new \LEClient\LEClient(
 			$le_email,
 			$use_staging ? true : false, 
-			$log_level === NULL ? \LEClient::LOG_OFF : $log_level,
+			$log_level === NULL ? \LEClient\LEClient::LOG_OFF : $log_level,
 			$wd
 		);
 		
@@ -74,17 +76,16 @@ class ACME{
 	
 	/**
 	 * 
-	 * @param \LEClient $client 
+	 * @param \LEClient\LEClient $client 
 	 * @param string $common_name 
 	 * @param array $domains 
 	 * @param \PObject $io 
 	 * @param bool $verbose 
 	 * @return bool
 	 */
-	public static function revoke($client, $common_name, $domains, $io, $verbose = true){
+	public static function revoke(LEClient $client, $common_name, $domains, $io, $verbose = true){
 		if(count($domains) == 0 || !is_array($domains)) throw new \PuzzleError("Domains cannot be empty!");
 		if($common_name == "") throw new \PuzzleError("Please specify common name using");
-		if(!is_a($client,"LEClient")) throw new \PuzzleError("Invalid Parameter");
 		
 		foreach($domains as $dk=>$dv){
 			$domains[$dk] = trim($dv);
@@ -95,7 +96,7 @@ class ACME{
 		
 		if($order->revokeCertificate()){
 			//Removing autorenewal
-			\Database::deleteRow("app_letsencrypt_cert","cn",$common_name);
+			\Database::delete("app_letsencrypt_cert","cn",$common_name);
 			if($verbose) $io->out("OK!\n");
 			return true;
 		}
@@ -104,7 +105,7 @@ class ACME{
 	}
 	
 	/**
-	 * @param \LEClient $client 
+	 * @param \LEClient\LEClient $client 
 	 * @param string $common_name 
 	 * @param array $domains 
 	 * @param \PObject $io 
@@ -121,17 +122,16 @@ class ACME{
 
 	/**
 	 * 
-	 * @param \LEClient $client 
+	 * @param \LEClient\LEClient $client 
 	 * @param string $common_name 
 	 * @param array $domains 
 	 * @param \PObject $io 
 	 * @param bool $verbose 
 	 * @return bool 
 	 */
-	public static function order($client, $common_name, $domains, $io, $autorenew = true, $verbose = false){
+	public static function order(LEClient $client, $common_name, $domains, $io, $autorenew = true, $verbose = false){
 		if(count($domains) == 0 || !is_array($domains)) throw new \PuzzleError("Domains cannot be empty!");
 		if($common_name == "") throw new \PuzzleError("Please specify common name using");
-		if(!is_a($client,"LEClient")) throw new \PuzzleError("Invalid Parameter");
 		
 		foreach($domains as $dk=>$dv){
 			$domains[$dk] = trim($dv);
@@ -146,7 +146,7 @@ class ACME{
 		if($verbose) $io->out("[OK] Order Created...\n");
 		
 		if(!$order->allAuthorizationsValid()){
-			$pending = $order->getPendingAuthorizations(\LEOrder::CHALLENGE_TYPE_DNS);
+			$pending = $order->getPendingAuthorizations(LEOrder::CHALLENGE_TYPE_DNS);
 			if($pending !== false){
 				if($verbose) {
 					print_r($pending);
@@ -172,7 +172,7 @@ class ACME{
 					
 					if($verbose) $io->out("Validating now #$k...\n");
 					
-					$ver_challenges = $order->verifyPendingOrderAuthorization($d["identifier"], \LEOrder::CHALLENGE_TYPE_DNS, false);
+					$ver_challenges = $order->verifyPendingOrderAuthorization($d["identifier"], LEOrder::CHALLENGE_TYPE_DNS, false);
 					if($ver_challenges !== true){
 						throw new \PuzzleError("Failed to verify ACME Challenge on {$d["identifier"]} with key {$d["DNSDigest"]}");
 					}
@@ -188,17 +188,24 @@ class ACME{
 			if($verbose) $io->out("Getting certificate...\n");
 			if(!$order->isFinalized()) $order->finalizeOrder();
 			if($order->isFinalized()) $order->getCertificate();
-			@\Database::deleteRow("app_letsencrypt_cert","cn",$common_name);
+			@\Database::delete("app_letsencrypt_cert","cn",$common_name);
 			if($autorenew){
 				//Renew every 60 days
-				\Database::newRow("app_letsencrypt_cert",$common_name,join(",",$domains),time(),(time() + (60 * T_DAY)), $client->staging ? 0 : 1);
+				\Database::insert("app_letsencrypt_cert", [
+					(new \DatabaseRowInput)
+						->setField("cn", $common_name)
+						->setField("domains", join(",",$domains))
+						->setField("lastIssued", time())
+						->setField("nextIssue", (time() + (60 * T_DAY)))
+						->setField("live", $client->staging ? 0 : 1)
+				]);
 				if($verbose) $io->out("Certificate will be reissued after 90 days. Make sure cronjob is set properly.\n");
 			}
 			if($verbose) $io->out("OK!\n");
 			return true;
 		}else{
 			if($verbose) $io->out("Some authorization missing...\n");
-			$pending = $order->getPendingAuthorizations(\LEOrder::CHALLENGE_TYPE_DNS);
+			$pending = $order->getPendingAuthorizations(LEOrder::CHALLENGE_TYPE_DNS);
 			if($verbose) print_r($pending);
 		}
 	}
@@ -273,4 +280,3 @@ class CF{
 		}
 	}
 }
-?>

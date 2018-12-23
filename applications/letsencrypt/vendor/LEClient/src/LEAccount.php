@@ -1,9 +1,11 @@
 <?php
 
+namespace LEClient;
+
 /**
  * LetsEncrypt Account class, containing the functions and data associated with a LetsEncrypt account.
  *
- * PHP version 7.1.0
+ * PHP version 5.2.0
  *
  * MIT License
  *
@@ -30,7 +32,7 @@
  * @author     Youri van Weegberg <youri@yourivw.nl>
  * @copyright  2018 Youri van Weegberg
  * @license    https://opensource.org/licenses/mit-license.php  MIT License
- * @version    1.1.1
+ * @version    1.1.4
  * @link       https://github.com/yourivw/LEClient
  * @since      Class available since Release 1.0.0
  */
@@ -126,7 +128,7 @@ class LEAccount
 			$this->id = $post['body']['id'];
 			$this->key = $post['body']['key'];
 			$this->contact = $post['body']['contact'];
-			$this->agreement = $post['body']['agreement'];
+			$this->agreement = isset($post['body']['agreement']) ? $post['body']['agreement'] : '';
 			$this->initialIp = $post['body']['initialIp'];
 			$this->createdAt = $post['body']['createdAt'];
 			$this->status = $post['body']['status'];
@@ -155,7 +157,7 @@ class LEAccount
 			$this->id = $post['body']['id'];
 			$this->key = $post['body']['key'];
 			$this->contact = $post['body']['contact'];
-			$this->agreement = $post['body']['agreement'];
+			$this->agreement = isset($post['body']['agreement']) ? $post['body']['agreement'] : '';
 			$this->initialIp = $post['body']['initialIp'];
 			$this->createdAt = $post['body']['createdAt'];
 			$this->status = $post['body']['status'];
