@@ -86,7 +86,7 @@ class LEConnector
      */
 	private function getNewNonce()
 	{
-		if(strpos($this->head($this->newNonce)['header'], "204 No Content") == false) throw new \RuntimeException('No new nonce.');
+		if(strpos($this->head($this->newNonce)['header'], "200 OK") == false) throw new \RuntimeException('No new nonce.');
 	}
 
     /**
