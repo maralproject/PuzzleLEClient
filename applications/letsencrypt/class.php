@@ -1,7 +1,6 @@
 <?php
 namespace LE;
 
-use LEClient\LEClient;
 use LEClient\LEOrder;
 
 /* Make sure that the server uses PHP 7 */

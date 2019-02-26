@@ -39,7 +39,7 @@ CronJob::register("renew", function () {
 		$io->out("Renewing " . $d["cn"] . "...\n");
 		$domains = explode(",", $d["domains"]);
 		LE\ACME::recursiveRemoveDirectory("$dir/{$d["cn"]}");
-		$client = LE\ACME::getInstance($d["cn"], $d["live"] == 1 ? false : true, LEClient\LEClient::LOG_STATUS);
+		$client = LE\ACME::getInstance($d["cn"], $d["live"] == 1 ? false : true, LEClient::LOG_STATUS);
 		if (LE\ACME::order($client, $d["cn"], $domains, $io, true, true)) {
 			$io->out("OK!\n");
 		}
@@ -71,7 +71,7 @@ PuzzleCLI::register(function ($io, $a) {
 		$common_name = $a["--cn"];
 		$domains = explode(",", $a["--domains"]);
 
-		$client = LE\ACME::getInstance($common_name, $a["-live"] ? false : true, $a["-vv"] ? LEClient\LEClient::LOG_DEBUG : ($a["-v"] ? LEClient\LEClient::LOG_STATUS : LEClient\LEClient::LOG_OFF));
+		$client = LE\ACME::getInstance($common_name, $a["-live"] ? false : true, $a["-vv"] ? LEClient::LOG_DEBUG : ($a["-v"] ? LEClient::LOG_STATUS : LEClient::LOG_OFF));
 		if ($a["-v"]) $io->out("LE Created...\n");
 
 		if (LE\ACME::revoke($client, $common_name, $domains, $io, $a["-v"])) {
@@ -90,7 +90,7 @@ PuzzleCLI::register(function ($io, $a) {
 		$common_name = trim($a["--cn"]);
 		$domains = explode(",", $a["--domains"]);
 
-		$client = LE\ACME::getInstance($common_name, $a["-live"] ? false : true, $a["-vv"] ? LEClient\LEClient::LOG_DEBUG : ($a["-v"] ? LEClient\LEClient::LOG_STATUS : LEClient\LEClient::LOG_OFF));
+		$client = LE\ACME::getInstance($common_name, $a["-live"] ? false : true, $a["-vv"] ? LEClient::LOG_DEBUG : ($a["-v"] ? LEClient::LOG_STATUS : LEClient::LOG_OFF));
 		if ($a["-v"]) $io->out("[OK] LE Created...\n");
 
 		if (LE\ACME::order($client, $common_name, $domains, $io, $a["-autorenewal"], $a["-v"])) {
