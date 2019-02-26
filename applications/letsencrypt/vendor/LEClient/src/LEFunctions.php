@@ -1,9 +1,13 @@
 <?php
 
+namespace LEClient;
+
+use Exception;
+
 /**
  * LetsEncrypt Functions class, supplying the LetsEncrypt Client with supportive functions.
  *
- * PHP version 7.1.0
+ * PHP version 5.2.0
  *
  * MIT License
  *
@@ -30,7 +34,7 @@
  * @author     Youri van Weegberg <youri@yourivw.nl>
  * @copyright  2018 Youri van Weegberg
  * @license    https://opensource.org/licenses/mit-license.php  MIT License
- * @version    1.1.1
+ * @version    1.1.4
  * @link       https://github.com/yourivw/LEClient
  * @since      Class available since Release 1.0.0
  */
@@ -54,7 +58,21 @@ class LEFunctions
 			"private_key_bits" => intval($keySize),
 		));
 		
-		if(!openssl_pkey_export($res, $privateKey)) throw new \RuntimeException("RSA keypair export failed!");
+		if ($res === false) {
+			$error = "Could not generate key pair! Check your OpenSSL configuration. OpenSSL Error: ".PHP_EOL;
+			while($message = openssl_error_string()){
+				$error .= $message.PHP_EOL;
+			}
+			throw new \RuntimeException($error);
+		}
+
+		if(!openssl_pkey_export($res, $privateKey, NULL, $config)) {
+			$error = "RSA keypair export failed!! Error: ".PHP_EOL;
+			while($message = openssl_error_string()){
+				$error .= $message.PHP_EOL;
+			}
+			throw new \RuntimeException($error);
+		}
 
 		$details = openssl_pkey_get_details($res);
 
@@ -193,7 +211,8 @@ class LEFunctions
         curl_setopt($handle, CURLOPT_URL, $requestURL);
         curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($handle, CURLOPT_FOLLOWLOCATION, true);
-        $response = curl_exec($handle);
+        $response = trim(curl_exec($handle));
+
 		return (!empty($response) && $response == $keyAuthorization);
 	}
 

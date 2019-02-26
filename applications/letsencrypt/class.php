@@ -122,7 +122,7 @@ class ACME{
 	 * @param bool $verbose 
 	 * @return bool 
 	 */
-	public static function order(LEClient $client, $common_name, $domains, $io, $autorenew = true, $verbose = false){
+	public static function order(\LEClient $client, $common_name, $domains, $io, $autorenew = true, $verbose = false){
 		if(count($domains) == 0 || !is_array($domains)) throw new \PuzzleError("Domains cannot be empty!");
 		if($common_name == "") throw new \PuzzleError("Please specify common name using");
 		
