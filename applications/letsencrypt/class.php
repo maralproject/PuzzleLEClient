@@ -1,7 +1,6 @@
 <?php
 namespace LE;
 
-use LEClient\LEClient;
 use LEClient\LEOrder;
 
 /* Make sure that the server uses PHP 7 */
@@ -39,7 +38,7 @@ class ACME{
 	 * Get new ACME instance
 	 * @param bool $use_staging
 	 * @param integer $log_level
-	 * @return \LEClient\LEClient
+	 * @return \LEClient
 	 */
 	public static function getInstance($common_name = "", $use_staging = true, $log_level = NULL){
 		$common_name = trim($common_name);
@@ -85,7 +84,7 @@ class ACME{
 	
 	/**
 	 * 
-	 * @param \LEClient\LEClient $client 
+	 * @param \LEClient $client 
 	 * @param string $common_name 
 	 * @param array $domains 
 	 * @param \PObject $io 
@@ -115,7 +114,7 @@ class ACME{
 
 	/**
 	 * 
-	 * @param \LEClient\LEClient $client 
+	 * @param \LEClient $client 
 	 * @param string $common_name 
 	 * @param array $domains 
 	 * @param \PObject $io 
