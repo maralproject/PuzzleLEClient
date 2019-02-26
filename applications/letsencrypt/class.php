@@ -1,6 +1,7 @@
 <?php
 namespace LE;
 
+use LEClient\LEClient;
 use LEClient\LEOrder;
 
 /* Make sure that the server uses PHP 7 */
@@ -38,7 +39,7 @@ class ACME{
 	 * Get new ACME instance
 	 * @param bool $use_staging
 	 * @param integer $log_level
-	 * @return \LEClient
+	 * @return \LEClient\LEClient
 	 */
 	public static function getInstance($common_name = "", $use_staging = true, $log_level = NULL){
 		$common_name = trim($common_name);
@@ -72,10 +73,10 @@ class ACME{
 		 * 6. Enter the "Variable value". My is - C:\xampp\apache\conf\openssl.cnf
 		 * 7. Click "OK" and close all the windows and RESTART your computer.
 		 */ 
-		$client = new \LEClient(
+		$client = new LEClient(
 			$le_email,
 			$use_staging ? true : false, 
-			$log_level === NULL ? \LEClient::LOG_OFF : $log_level,
+			$log_level === NULL ? LEClient::LOG_OFF : $log_level,
 			$wd
 		);
 		
@@ -84,7 +85,7 @@ class ACME{
 	
 	/**
 	 * 
-	 * @param \LEClient $client 
+	 * @param \LEClient\LEClient $client 
 	 * @param string $common_name 
 	 * @param array $domains 
 	 * @param \PObject $io 
@@ -114,7 +115,7 @@ class ACME{
 
 	/**
 	 * 
-	 * @param \LEClient $client 
+	 * @param \LEClient\LEClient $client 
 	 * @param string $common_name 
 	 * @param array $domains 
 	 * @param \PObject $io 
