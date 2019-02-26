@@ -34,15 +34,17 @@ CronJob::register("renew", function () {
 
 	$db = Database::readAll("app_letsencrypt_cert", "where `nextIssue`<'?'", time());
 	if (count($db) > 0) $io->out("Renewing Let's Encrypt certificate...\n");
+	$dir = realpath(rtrim(btfslash(LE\Config::get("dir")), "/"));
 	foreach ($db as $d) {
 		$io->out("Renewing " . $d["cn"] . "...\n");
 		$domains = explode(",", $d["domains"]);
+		@unlink("$dir/{$d["cn"]}/order");
 		$client = LE\ACME::getInstance($d["cn"], $d["live"] == 1 ? false : true, LEClient\LEClient::LOG_STATUS);
-		if (LE\ACME::renew($client, $d["cn"], $domains, $io, true, true)) {
+		if (ACME::order($client, $d["cn"], $domains, $io, true, true)) {
 			$io->out("OK!\n");
 		}
 	}
-	if (count($db) > 0) $io->out("Done!\n");
+	if (count($db) > 0) $io->out("Nothing to renew!\n");
 }, $ct);
 
 /* Register a function to perform CLI */

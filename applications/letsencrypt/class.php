@@ -103,22 +103,6 @@ class ACME{
 		
 		return false;
 	}
-	
-	/**
-	 * @param \LEClient\LEClient $client 
-	 * @param string $common_name 
-	 * @param array $domains 
-	 * @param \PObject $io 
-	 * @param bool $verbose 
-	 * @return bool 
-	 */
-	public static function renew($client, $common_name, $domains, $io, $autorenew = true, $verbose = false){
-		//Removing old cretificate
-		$dir = realpath(rtrim(btfslash(Config::get("dir")),"/")."/".$common_name);
-
-		@unlink("$dir/order");
-		return ACME::order($client, $common_name, $domains, $io, $autorenew, $verbose);
-	}
 
 	/**
 	 * 
