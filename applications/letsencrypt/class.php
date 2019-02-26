@@ -26,6 +26,15 @@ class Config{
 }
 
 class ACME{
+	public static function recursiveRemoveDirectory($directory)
+	{
+		foreach(glob("{$directory}/*") as $file){
+			if(is_dir($file)) recursiveRemoveDirectory($file);
+			else unlink($file);
+		}
+		rmdir($directory);
+	}
+
 	/**
 	 * Get new ACME instance
 	 * @param bool $use_staging

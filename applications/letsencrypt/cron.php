@@ -38,7 +38,7 @@ CronJob::register("renew", function () {
 	foreach ($db as $d) {
 		$io->out("Renewing " . $d["cn"] . "...\n");
 		$domains = explode(",", $d["domains"]);
-		@unlink("$dir/{$d["cn"]}/order");
+		LE\ACME::recursiveRemoveDirectory("$dir/{$d["cn"]}");
 		$client = LE\ACME::getInstance($d["cn"], $d["live"] == 1 ? false : true, LEClient\LEClient::LOG_STATUS);
 		if (ACME::order($client, $d["cn"], $domains, $io, true, true)) {
 			$io->out("OK!\n");
