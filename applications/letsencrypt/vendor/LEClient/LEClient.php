@@ -1,17 +1,18 @@
 <?php
 
-namespace LEClient;
-
-require_once('LEConnector.php');
-require_once('LEAccount.php');
-require_once('LEOrder.php');
-require_once('LEAuthorization.php');
-require_once('LEFunctions.php');
+/**
+ * Load the dependencies for the LetsEncrypt Client
+ */
+require_once('src/LEConnector.php');
+require_once('src/LEAccount.php');
+require_once('src/LEOrder.php');
+require_once('src/LEAuthorization.php');
+require_once('src/LEFunctions.php');
 
 /**
  * Main LetsEncrypt Client class, works as a framework for the LEConnector, LEAccount, LEOrder and LEAuthorization classes.
  *
- * PHP version 5.2.0
+ * PHP version 7.1.0
  *
  * MIT License
  *
@@ -38,7 +39,7 @@ require_once('LEFunctions.php');
  * @author     Youri van Weegberg <youri@yourivw.nl>
  * @copyright  2018 Youri van Weegberg
  * @license    https://opensource.org/licenses/mit-license.php  MIT License
- * @version    1.1.4
+ * @version    1.1.1
  * @link       https://github.com/yourivw/LEClient
  * @since      Class available since Release 1.0.0
  */
@@ -58,6 +59,8 @@ class LEClient
 	const LOG_OFF = 0;		// Logs no messages or faults, except Runtime Exceptions.
 	const LOG_STATUS = 1;	// Logs only messages and faults.
 	const LOG_DEBUG = 2;	// Logs messages, faults and raw responses from HTTP requests.
+	
+	public $staging;
 
     /**
      * Initiates the LetsEncrypt main client.
@@ -72,7 +75,7 @@ class LEClient
      */
 	public function __construct($email, $acmeURL = LEClient::LE_PRODUCTION, $log = LEClient::LOG_OFF, $certificateKeys = 'keys/', $accountKeys = '__account/')
 	{
-
+		
 		$this->log = $log;
 
 		if (is_bool($acmeURL))
@@ -85,6 +88,8 @@ class LEClient
 			$this->baseURL = $acmeURL;
 		}
 		else throw new \RuntimeException('acmeURL must be set to string or bool (legacy).');
+		
+		$this->staging = $acmeURL == LEClient::LE_STAGING;
 
 		if (is_array($certificateKeys) && is_string($accountKeys)) throw new \RuntimeException('When certificateKeys is array, accountKeys must be array too.');
 		elseif (is_array($accountKeys) && is_string($certificateKeys)) throw new \RuntimeException('When accountKeys is array, certificateKeys must be array too.');
@@ -180,7 +185,7 @@ class LEClient
      *
      * @param string	$basename	The base name for the order. Preferable the top domain (example.org). Will be the directory in which the keys are stored. Used for the CommonName in the certificate as well.
      * @param array 	$domains 	The array of strings containing the domain names on the certificate.
-     * @param string 		$keyType 	Type of the key we want to use for certificate. Can be provided in ALGO-SIZE format (ex. rsa-4096 or ec-256) or simple "rsa" and "ec" (using default sizes)
+     * @param string 	$keyType 	Type of the key we want to use for certificate. Can be provided in ALGO-SIZE format (ex. rsa-4096 or ec-256) or simple "rsa" and "ec" (using default sizes)
      * @param string 	$notBefore	A date string formatted like 0000-00-00T00:00:00Z (yyyy-mm-dd hh:mm:ss) at which the certificate becomes valid. Defaults to the moment the order is finalized. (optional)
      * @param string 	$notAfter  	A date string formatted like 0000-00-00T00:00:00Z (yyyy-mm-dd hh:mm:ss) until which the certificate is valid. Defaults to 90 days past the moment the order is finalized. (optional)
      *

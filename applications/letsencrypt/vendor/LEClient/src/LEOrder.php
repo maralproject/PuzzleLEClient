@@ -1,11 +1,9 @@
 <?php
 
-namespace LEClient;
-
 /**
  * LetsEncrypt Order class, containing the functions and data associated with a specific LetsEncrypt order.
  *
- * PHP version 5.2.0
+ * PHP version 7.1.0
  *
  * MIT License
  *
@@ -32,7 +30,7 @@ namespace LEClient;
  * @author     Youri van Weegberg <youri@yourivw.nl>
  * @copyright  2018 Youri van Weegberg
  * @license    https://opensource.org/licenses/mit-license.php  MIT License
- * @version    1.1.4
+ * @version    1.1.1
  * @link       https://github.com/yourivw/LEClient
  * @since      Class available since Release 1.0.0
  */
@@ -108,7 +106,7 @@ class LEOrder
 			if (filter_var($this->orderURL, FILTER_VALIDATE_URL))
 			{
 				$get = $this->connector->get($this->orderURL);
-				if(strpos($get['header'], "200 OK") !== false && $get['body']['status'] != "invalid")
+				if(strpos($get['header'], "200 OK") !== false)
 				{
 					$orderdomains = array_map(function($ident) { return $ident['value']; }, $get['body']['identifiers']);
 					$diff = array_merge(array_diff($orderdomains, $domains), array_diff($domains, $orderdomains));
@@ -485,7 +483,7 @@ class LEOrder
             'HOME = .
 			RANDFILE = $ENV::HOME/.rnd
 			[ req ]
-			default_bits = ' . $this->keySize . '
+			default_bits = 4096
 			default_keyfile = privkey.pem
 			distinguished_name = req_distinguished_name
 			req_extensions = v3_req
@@ -511,7 +509,7 @@ class LEOrder
      */
 	public function finalizeOrder($csr = '')
 	{
-		if($this->status == 'pending' || $this->status == 'ready')
+		if($this->status == 'pending')
 		{
 			if($this->allAuthorizationsValid())
 			{

@@ -1,11 +1,9 @@
 <?php
 
-namespace LEClient;
-
 /**
  * LetsEncrypt Authorization class, getting LetsEncrypt authorization data associated with a LetsEncrypt Order instance.
  *
- * PHP version 5.2.0
+ * PHP version 7.1.0
  * 
  * MIT License
  * 
@@ -32,7 +30,7 @@ namespace LEClient;
  * @author     Youri van Weegberg <youri@yourivw.nl>
  * @copyright  2018 Youri van Weegberg
  * @license    https://opensource.org/licenses/mit-license.php  MIT License
- * @version    1.1.4
+ * @version    1.1.1
  * @link       https://github.com/yourivw/LEClient
  * @since      Class available since Release 1.0.0
  */
@@ -91,7 +89,7 @@ class LEAuthorization
 		}
 		else
 		{
-			if($this->log >= LECLient::LOG_STATUS) LEFunctions::log('Cannot find authorization \'' . $this->authorizationURL . '\'.', 'function updateData');
+			if($this->log >= LECLient::LOG_STATUS) LEFunctions::log('Cannot find authorization \'' . $authorizationURL . '\'.', 'function updateData');
 		}
 	}
 	

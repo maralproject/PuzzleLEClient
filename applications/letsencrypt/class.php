@@ -9,7 +9,7 @@ if(!version_compare(PHP_VERSION,"7.1.0",">=")){
 	throw new PuzzleError("PuzzleLE Client require PHP7.1!");
 }
 
-require("vendor/LEClient/src/LEClient.php");
+require("vendor/LEClient/LEClient.php");
 require("vendor/cloudflare/autoload.php");
 
 class Config{
@@ -39,7 +39,7 @@ class ACME{
 	 * Get new ACME instance
 	 * @param bool $use_staging
 	 * @param integer $log_level
-	 * @return \LEClient\LEClient
+	 * @return \LEClient
 	 */
 	public static function getInstance($common_name = "", $use_staging = true, $log_level = NULL){
 		$common_name = trim($common_name);
@@ -73,10 +73,10 @@ class ACME{
 		 * 6. Enter the "Variable value". My is - C:\xampp\apache\conf\openssl.cnf
 		 * 7. Click "OK" and close all the windows and RESTART your computer.
 		 */ 
-		$client = new \LEClient\LEClient(
+		$client = new \LEClient(
 			$le_email,
 			$use_staging ? true : false, 
-			$log_level === NULL ? \LEClient\LEClient::LOG_OFF : $log_level,
+			$log_level === NULL ? \LEClient::LOG_OFF : $log_level,
 			$wd
 		);
 		
@@ -85,7 +85,7 @@ class ACME{
 	
 	/**
 	 * 
-	 * @param \LEClient\LEClient $client 
+	 * @param \LEClient $client 
 	 * @param string $common_name 
 	 * @param array $domains 
 	 * @param \PObject $io 
@@ -115,7 +115,7 @@ class ACME{
 
 	/**
 	 * 
-	 * @param \LEClient\LEClient $client 
+	 * @param \LEClient $client 
 	 * @param string $common_name 
 	 * @param array $domains 
 	 * @param \PObject $io 
