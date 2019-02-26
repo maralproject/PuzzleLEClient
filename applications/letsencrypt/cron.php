@@ -40,7 +40,7 @@ CronJob::register("renew", function () {
 		$domains = explode(",", $d["domains"]);
 		LE\ACME::recursiveRemoveDirectory("$dir/{$d["cn"]}");
 		$client = LE\ACME::getInstance($d["cn"], $d["live"] == 1 ? false : true, LEClient\LEClient::LOG_STATUS);
-		if (ACME::order($client, $d["cn"], $domains, $io, true, true)) {
+		if (LE\ACME::order($client, $d["cn"], $domains, $io, true, true)) {
 			$io->out("OK!\n");
 		}
 	}
