@@ -20,8 +20,7 @@ OPTIONS:
 
      (Self explanatory)
      revoke --cn example.com --domains "*.example.com,example.com"
-     order --cn example.com --domains "*.example.com,example.com" [-autorenewal]
-	 
-     disable-renewal --cn example.com
+     order --cn example.com --domains "*.example.com,example.com" [-autorenewal | -manual]
+     Use -manual for manual cloudflare action. This is useful if you want to order certificate just once.
 
- 
+     disable-renewal --cn example.com

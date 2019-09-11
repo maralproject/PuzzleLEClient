@@ -1,7 +1,9 @@
 <?php
+
 use LEClient\LEClient;
 
 /* Register a cron job to renew old certificate */
+
 $ct = new CronTrigger;
 $ct->interval(T_DAY);
 
@@ -18,7 +20,7 @@ CronJob::register("renew", function () {
 			},
 			"out" => function ($o) {
 				echo trim($o, "\t");
-				file_put_contents(__ROOTDIR . "/letsencrypt.log", $o, FILE_APPEND);
+				file_put_contents(__LOGDIR . "/letsencrypt.log", $o, FILE_APPEND);
 			}
 		]);
 	} else {
@@ -27,7 +29,7 @@ CronJob::register("renew", function () {
 				throw new PuzzleError("Input only available in CLI!");
 			},
 			"out" => function ($o) {
-				file_put_contents(__ROOTDIR . "/letsencrypt.log", $o, FILE_APPEND);
+				file_put_contents(__LOGDIR . "/letsencrypt.log", $o, FILE_APPEND);
 			}
 		]);
 	}
@@ -65,7 +67,6 @@ PuzzleCLI::register(function ($io, $a) {
 			}
 		}
 		if ($a["-v"]) $io->out("Done\n");
-
 	} else if ($a["revoke"]) {
 		if ($a["-v"]) $io->out("Revoking certificate...\n");
 		if ($a["-v"]) if ($a["-live"] !== true) $io->out("Use staging server...\n");
@@ -79,12 +80,10 @@ PuzzleCLI::register(function ($io, $a) {
 		if (LE\ACME::revoke($client, $common_name, $domains, $io, $a["-v"])) {
 			if (!$a["-v"]) $io->out("OK!\n");
 		}
-
 	} else if ($a["disable-renewal"]) {
 		//Removing autorenewal
 		Database::delete("app_letsencrypt_cert", "cn", $a["--cn"]);
 		$io->out("OK!\n");
-
 	} else if ($a["order"]) {
 		if ($a["-v"]) $io->out("Ordering certificate...\n");
 		if ($a["-v"]) if ($a["-live"] !== true) $io->out("Use staging server...\n");
@@ -95,7 +94,7 @@ PuzzleCLI::register(function ($io, $a) {
 		$client = LE\ACME::getInstance($common_name, $a["-live"] ? false : true, $a["-vv"] ? LEClient::LOG_DEBUG : ($a["-v"] ? LEClient::LOG_STATUS : LEClient::LOG_OFF));
 		if ($a["-v"]) $io->out("[OK] LE Created...\n");
 
-		if (LE\ACME::order($client, $common_name, $domains, $io, $a["-autorenewal"], $a["-v"])) {
+		if (LE\ACME::order($client, $common_name, $domains, $io, $a["-autorenewal"], (bool) $a["-v"], (bool) $a["-manual"])) {
 			if (!$a["-v"]) $io->out("OK!\n");
 		}
 	} else {
