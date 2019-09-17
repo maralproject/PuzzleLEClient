@@ -1,0 +1,6 @@
+{
+    "require": {
+        "yourivw/leclient": "^1.1",
+        "cloudflare/sdk": "^1.1"
+    }
+}

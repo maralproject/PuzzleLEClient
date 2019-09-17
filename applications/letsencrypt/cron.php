@@ -1,9 +1,7 @@
 <?php
-
 use LEClient\LEClient;
 
 /* Register a cron job to renew old certificate */
-
 $ct = new CronTrigger;
 $ct->interval(T_DAY);
 

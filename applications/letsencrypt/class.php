@@ -5,14 +5,11 @@ namespace LE;
 use LEClient\LEClient;
 use LEClient\LEOrder;
 
-/* Make sure that the server uses PHP 7 */
-
 if (!version_compare(PHP_VERSION, "7.1.0", ">=")) {
 	throw new PuzzleError("PuzzleLE Client require PHP7.1!");
 }
 
-require("vendor/LEClient/LEClient.php");
-require("vendor/cloudflare/autoload.php");
+require "vendor/autoload.php";
 
 class Config
 {
