@@ -169,7 +169,7 @@ class ACME
 
 					if ($verbose) $io->out("Validating $subdomain with key {$d["DNSDigest"]} #$k...\n");
 
-					for ($i = 1; $i > 0; $i--) {
+					for ($i = 125; $i > 0; $i--) {
 						$p_check = dns_get_record("_acme-challenge." . $d["identifier"], DNS_TXT)[0]["txt"];
 						if ($p_check == $d["DNSDigest"] && $i < 100) {
 							sleep(2);
