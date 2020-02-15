@@ -9,8 +9,6 @@ if (!version_compare(PHP_VERSION, "7.1.0", ">=")) {
 	throw new PuzzleError("PuzzleLE Client require PHP7.1!");
 }
 
-require "vendor/autoload.php";
-
 class Config
 {
 	public static function get($key)
