@@ -168,11 +168,11 @@ class ACME
 					if ($verbose) $io->out("Validating $subdomain with key {$d["DNSDigest"]} #$k...\n");
 
 					for ($i = 125; $i > 0; $i--) {
-						$p_check = dns_get_record("_acme-challenge." . $d["identifier"], DNS_TXT)[0]["txt"];
-						if ($p_check == $d["DNSDigest"] && $i < 100) {
-							sleep(2);
-							break;
-						}
+						// $p_check = dns_get_record("_acme-challenge." . $d["identifier"], DNS_TXT)[0]["txt"];
+						// if ($p_check == $d["DNSDigest"] && $i < 100) {
+						// 	sleep(2);
+						// 	break;
+						// }
 						if ($verbose) echo "Delaying $i secs, waiting for DNS cache to flush...\r";
 						sleep(1);
 					}
